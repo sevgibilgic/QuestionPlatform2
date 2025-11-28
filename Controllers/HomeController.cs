@@ -1,6 +1,7 @@
-﻿using System.Diagnostics;
+﻿using QuestionPlatform2.Models;
+using QuestionPlatform2.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using QuestionPlatform2.Models;
+using System.Diagnostics;
 
 namespace QuestionPlatform2.Controllers
 {
@@ -12,9 +13,25 @@ namespace QuestionPlatform2.Controllers
         public HomeController(ILogger<HomeController> logger, QuestionRepository questionRepository, AnswerRepository answerRepository)
         {
             _logger = logger;
+            _questionRepository = questionRepository;
+            _answerRepository = answerRepository;
         }
 
         public IActionResult Index()
+        {
+            var questions = _questionRepository.GetList();
+            var answer = _answerRepository.GetList();
+            questions = questions.Where(s => s.IsActive == true).ToList();
+            return View();
+        }
+
+
+        public IActionResult TestWithLayout()
+        {
+            return View();
+        }
+
+        public IActionResult TestWithOutLayout()
         {
             return View();
         }

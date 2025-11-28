@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using QuestionPlatform2.Repositories;
+using QuestionPlatform2.Models;
+
 namespace QuestionPlatform2
 {
     public class Program
@@ -8,7 +12,12 @@ namespace QuestionPlatform2
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddScoped<QuestionRepository>();
+            builder.Services.AddScoped<AnswerRepository>();
+            builder.Services.AddDbContext<AppDbContext>(opt =>
+            {
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("sqlCon"));
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
