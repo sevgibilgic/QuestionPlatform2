@@ -1,9 +1,43 @@
 ﻿@{
-    ViewData["Title"] = "Question Update Page";
-
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    Layout = "_LayoutAdmin";
+}
+@model Question
+@section CardHeader {
+    <span>Soru Düzenle</span>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Update Question</h1>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Question" asp-action="Update" method="post">
+
+            <div class="mb-2">
+                <label asp-for="Title"></label>
+                <input asp-for="Title" class="form-control" />
+                <span class="text-danger" asp-validation-for="Title"></span>
+            </div>
+            <div class="mb-2">
+                <label asp-for="Content"></label>
+                <input asp-for="Content" class="form-control" />
+                <span class="text-danger" asp-validation-for="Content"></span>
+            </div>
+            <div class="mb-2">
+                <label asp-for="ImageUrl"></label>
+                <textarea asp-for="ImageUrl" class="form-control" rows="3"></textarea>
+                <span class="text-danger" asp-validation-for="ImageUrl"></span>
+            </div>
+            <div class="mb-2">
+
+                <input asp-for="IsActive" class="form-check-input" />
+                <label asp-for="IsActive"></label>
+                <span class="text-danger" asp-validation-for="IsActive"></span>
+            </div>
+            <div class="mb-2">
+                <input type="submit" value="Kaydet" class="btn btn-primary btn-sm" />
+            </div>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
