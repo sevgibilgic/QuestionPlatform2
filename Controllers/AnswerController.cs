@@ -1,5 +1,6 @@
 ﻿using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
+using QuestionPlatform2.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace QuestionPlatform2.Controllers
@@ -15,8 +16,8 @@ namespace QuestionPlatform2.Controllers
 
         public IActionResult Index()
         {
-            var products = _answerRepository.GetList();
-            return View(products);
+            var answers = _answerRepository.GetList();
+            return View(answers);
         }
         public IActionResult Add()
         {
@@ -24,7 +25,7 @@ namespace QuestionPlatform2.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Answer model)
+        public IActionResult Add(AnswerModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -35,12 +36,12 @@ namespace QuestionPlatform2.Controllers
         }
         public IActionResult Update(int id)
         {
-            var product = _answerRepository.GetById(id);
-            return View(product);
+            var answer = _answerRepository.GetById(id);
+            return View(answer);
         }
 
         [HttpPost]
-        public IActionResult Update(Answer model)
+        public IActionResult Update(AnswerModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -51,12 +52,12 @@ namespace QuestionPlatform2.Controllers
         }
         public IActionResult Delete(int id)
         {
-            var product = _answerRepository.GetById(id);
-            return View(product);
+            var answer = _answerRepository.GetById(id);
+            return View(answer);
         }
 
         [HttpPost]
-        public IActionResult Delete(Answer model)
+        public IActionResult Delete(AnswerModel model)
         {
 
             _answerRepository.Delete(model.Id);

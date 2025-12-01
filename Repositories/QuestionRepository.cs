@@ -1,4 +1,5 @@
 ﻿using QuestionPlatform2.Models;
+using QuestionPlatform2.ViewModels;
 
 namespace QuestionPlatform2.Repositories
 {
@@ -11,40 +12,66 @@ namespace QuestionPlatform2.Repositories
             _context = context;
         }
 
-        public List<Question> GetList()
+        public List<QuestionModel> GetList()
         {
-            var questions = _context.Questions.ToList();
-            return questions;
-        }
-        public Question GetById(int id)
-        {
-            var question = _context.Questions.Where(s => s.Id == id).FirstOrDefault();
+            var question = _context.Questions.Select(x => new QuestionModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Content = x.Content,
+                IsActive = x.IsActive,
+                CreatedAt = x.CreatedAt,
+                UpdatedAt = x.UpdatedAt
+            }).ToList();
+
             return question;
         }
-        public void Add(Question model)
+        public QuestionModel GetById(int id)
         {
-            _context.Questions.Add(model);
+            var question = _context.Questions.Where(s => s.Id == id).Select(x => new QuestionModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Content = x.Content,
+                IsActive = x.IsActive,
+                CreatedAt = x.CreatedAt,
+                UpdatedAt = x.UpdatedAt
+            }).FirstOrDefault();
+
+            return question;
+        }
+        public void Add(QuestionModel model)
+        {
+            var question = new Question()
+            {
+                Title = model.Title,
+                Content = model.Content,
+                IsActive = model.IsActive,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+
+            };
+            _context.Questions.Add(question);
             _context.SaveChanges();
         }
-        public void Update(Question model)
+        public void Update(QuestionModel model)
         {
-            var question = GetById(model.Id);
+            var question = _context.Questions.Where(s => s.Id == model.Id).FirstOrDefault();
             if (question != null)
             {
                 question.Title = model.Title;
                 question.Content = model.Content;
                 question.IsActive = model.IsActive;
-
                 _context.Questions.Update(question);
                 _context.SaveChanges();
             }
         }
         public void Delete(int id)
         {
-            var product = GetById(id);
-            if (product != null)
+            var question = _context.Questions.Where(s => s.Id == id).FirstOrDefault();
+            if (question != null)
             {
-                _context.Questions.Remove(product);
+                _context.Questions.Remove(question);
                 _context.SaveChanges();
             }
         }
