@@ -1,4 +1,5 @@
-﻿using QuestionPlatform2.Models;
+﻿using AutoMapper;
+using QuestionPlatform2.Models;
 using QuestionPlatform2.ViewModels;
 
 namespace QuestionPlatform2.Repositories
@@ -6,45 +7,30 @@ namespace QuestionPlatform2.Repositories
     public class AnswerRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AnswerRepository(AppDbContext context)
+        public AnswerRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public List<AnswerModel> GetList()
         {
-            var answer = _context.Answers.Select(x => new AnswerModel()
-            {
-                Id = x.Id,
-                AnswerContent = x.AnswerContent,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt
-            }).ToList();
-
-            return answer;
+            var answers = _context.Answers.ToList();
+            var answerModels = _mapper.Map<List<AnswerModel>>(answers);
+            return answerModels;
         }
+
         public AnswerModel GetById(int id)
         {
-            var answer = _context.Answers.Where(s => s.Id == id).Select(x => new AnswerModel()
-            {
-                Id = x.Id,
-                AnswerContent = x.AnswerContent,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt
-            }).FirstOrDefault();
-
-            return answer;
+            var answer = _context.Answers.Where(s => s.Id == id).FirstOrDefault();
+            var answerModel = _mapper.Map<AnswerModel>(answer);
+            return answerModel;
         }
         public void Add(AnswerModel model)
         {
-            var answer = new Answer()
-            {
-                AnswerContent = model.AnswerContent,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-
-            };
+            var answer = _mapper.Map<Answer>(model);
             _context.Answers.Add(answer);
             _context.SaveChanges();
         }
@@ -54,6 +40,8 @@ namespace QuestionPlatform2.Repositories
             if (answer != null)
             {
                 answer.AnswerContent = model.AnswerContent;
+                answer.UpdatedAt = DateTime.Now;
+
                 _context.Answers.Update(answer);
                 _context.SaveChanges();
             }

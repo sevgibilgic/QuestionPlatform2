@@ -1,4 +1,5 @@
-﻿using QuestionPlatform2.Models;
+﻿using AutoMapper;
+using QuestionPlatform2.Models;
 using QuestionPlatform2.ViewModels;
 
 namespace QuestionPlatform2.Repositories
@@ -6,51 +7,30 @@ namespace QuestionPlatform2.Repositories
     public class QuestionRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public QuestionRepository(AppDbContext context)
+        public QuestionRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public List<QuestionModel> GetList()
         {
-            var question = _context.Questions.Select(x => new QuestionModel()
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Content = x.Content,
-                IsActive = x.IsActive,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt
-            }).ToList();
-
-            return question;
+            var questions = _context.Questions.ToList();
+            var questionModels = _mapper.Map<List<QuestionModel>>(questions);
+            return questionModels;
         }
+
         public QuestionModel GetById(int id)
         {
-            var question = _context.Questions.Where(s => s.Id == id).Select(x => new QuestionModel()
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Content = x.Content,
-                IsActive = x.IsActive,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt
-            }).FirstOrDefault();
-
-            return question;
+            var question = _context.Questions.Where(s => s.Id == id).FirstOrDefault();
+            var questionModel = _mapper.Map<QuestionModel>(question);
+            return questionModel;
         }
         public void Add(QuestionModel model)
         {
-            var question = new Question()
-            {
-                Title = model.Title,
-                Content = model.Content,
-                IsActive = model.IsActive,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-
-            };
+            var question = _mapper.Map<Question>(model);
             _context.Questions.Add(question);
             _context.SaveChanges();
         }
@@ -62,6 +42,9 @@ namespace QuestionPlatform2.Repositories
                 question.Title = model.Title;
                 question.Content = model.Content;
                 question.IsActive = model.IsActive;
+                question.ImageUrl = model.ImageUrl;
+                question.UpdatedAt = DateTime.Now;
+
                 _context.Questions.Update(question);
                 _context.SaveChanges();
             }

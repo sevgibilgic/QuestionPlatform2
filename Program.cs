@@ -1,6 +1,8 @@
+using System.Reflection;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using QuestionPlatform2.Repositories;
 using QuestionPlatform2.Models;
+using QuestionPlatform2.Repositories;
 
 namespace QuestionPlatform2
 {
@@ -18,6 +20,7 @@ namespace QuestionPlatform2
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("sqlCon"));
             });
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
