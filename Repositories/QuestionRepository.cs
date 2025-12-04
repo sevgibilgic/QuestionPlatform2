@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.ViewModels;
 
@@ -24,9 +25,11 @@ namespace QuestionPlatform2.Repositories
 
         public QuestionModel GetById(int id)
         {
-            var question = _context.Questions.Where(s => s.Id == id).FirstOrDefault();
-            var questionModel = _mapper.Map<QuestionModel>(question);
-            return questionModel;
+            var question = _context.Questions
+                .Include(q => q.Answers)
+                .FirstOrDefault(q => q.Id == id);
+
+            return _mapper.Map<QuestionModel>(question);
         }
         public void Add(QuestionModel model)
         {

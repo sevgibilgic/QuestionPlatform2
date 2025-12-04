@@ -7,20 +7,20 @@ namespace QuestionPlatform2.ViewModels
         public int Id { get; set; }
 
 
-        [Display(Name = "Soru Detayları")]
-        [Required(ErrorMessage = "Soru Detaylarını Giriniz!")]
+        [Display(Name = "Cevap Detayları")]
+        [Required(ErrorMessage = "Cevap Detaylarını Giriniz!")]
         public string AnswerContent { get; set; }
 
 
 
         [Display(Name = "Oluşturulma Tarihi")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
 
 
 
         [Display(Name = "Güncellenme Tarihi")]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
     }
 }

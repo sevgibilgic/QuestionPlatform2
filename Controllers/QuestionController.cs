@@ -63,5 +63,14 @@ namespace QuestionPlatform2.Controllers
             _questionRepository.Delete(model.Id);
             return RedirectToAction("Index");
         }
+        public IActionResult Details(int id)
+        {
+            var question = _questionRepository.GetById(id);
+            if (question == null)
+                return NotFound();
+
+            return View(question);
+        }
+
     }
 }

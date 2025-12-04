@@ -35,13 +35,16 @@ namespace QuestionPlatform2.ViewModels
 
 
         [Display(Name = "Oluşturulma Tarihi")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
 
 
 
         [Display(Name = "Güncellenme Tarihi")]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        public List<AnswerModel> Answers { get; set; } = new List<AnswerModel>();
+
 
     }
 }

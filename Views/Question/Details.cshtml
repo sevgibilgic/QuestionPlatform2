@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+@model QuestionPlatform2.ViewModels.QuestionModel
+@section CardHeader {
+    <span>Detaylar</span>
+}
+<h2>@Model.Title</h2>
+<p>@Model.Content</p>
+
+<hr />
+
+<h3>Cevaplar:</h3>
+
+@if (Model.Answers == null || !Model.Answers.Any())
+{
+    <p>Bu soruya henüz cevap eklenmemiş.</p>
+}
+else
+{
+    <ul>
+        @foreach (var a in Model.Answers)
+        {
+            <li>@a.AnswerContent</li>
+        }
+    </ul>
+}
