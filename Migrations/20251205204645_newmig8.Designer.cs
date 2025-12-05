@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuestionPlatform2.Models;
 
@@ -11,9 +12,11 @@ using QuestionPlatform2.Models;
 namespace QuestionPlatform2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251205204645_newmig8")]
+    partial class newmig8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,75 +90,29 @@ namespace QuestionPlatform2.Migrations
                         {
                             Id = 1,
                             Content = "İçerik 1",
-                            CreatedAt = new DateTime(2025, 12, 6, 0, 8, 22, 414, DateTimeKind.Local).AddTicks(3177),
+                            CreatedAt = new DateTime(2025, 12, 5, 23, 46, 45, 461, DateTimeKind.Local).AddTicks(7227),
                             IsActive = true,
                             Title = "Soru Başlığı 1",
-                            UpdatedAt = new DateTime(2025, 12, 6, 0, 8, 22, 414, DateTimeKind.Local).AddTicks(3178)
+                            UpdatedAt = new DateTime(2025, 12, 5, 23, 46, 45, 461, DateTimeKind.Local).AddTicks(7227)
                         },
                         new
                         {
                             Id = 2,
                             Content = "İçerik 2",
-                            CreatedAt = new DateTime(2025, 12, 6, 0, 8, 22, 414, DateTimeKind.Local).AddTicks(3181),
+                            CreatedAt = new DateTime(2025, 12, 5, 23, 46, 45, 461, DateTimeKind.Local).AddTicks(7232),
                             IsActive = true,
                             Title = "Soru Başlığı 2",
-                            UpdatedAt = new DateTime(2025, 12, 6, 0, 8, 22, 414, DateTimeKind.Local).AddTicks(3182)
+                            UpdatedAt = new DateTime(2025, 12, 5, 23, 46, 45, 461, DateTimeKind.Local).AddTicks(7233)
                         },
                         new
                         {
                             Id = 3,
                             Content = "İçerik 3",
-                            CreatedAt = new DateTime(2025, 12, 6, 0, 8, 22, 414, DateTimeKind.Local).AddTicks(3184),
+                            CreatedAt = new DateTime(2025, 12, 5, 23, 46, 45, 461, DateTimeKind.Local).AddTicks(7236),
                             IsActive = false,
                             Title = "Soru Başlığı 3",
-                            UpdatedAt = new DateTime(2025, 12, 6, 0, 8, 22, 414, DateTimeKind.Local).AddTicks(3185)
+                            UpdatedAt = new DateTime(2025, 12, 5, 23, 46, 45, 461, DateTimeKind.Local).AddTicks(7236)
                         });
-                });
-
-            modelBuilder.Entity("QuestionPlatform2.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhotoUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("QuestionPlatform2.Models.Answer", b =>

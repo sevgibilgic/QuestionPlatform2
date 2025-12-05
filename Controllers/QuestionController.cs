@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
 using QuestionPlatform2.ViewModels;
@@ -8,81 +9,88 @@ namespace QuestionPlatform2.Controllers
 {
     public class QuestionController : Controller
     {
-        private readonly QuestionRepository _repo;
+        private readonly QuestionRepository _questionRepository;
+        private readonly AnswerRepository _answerRepository;
         private readonly IMapper _mapper;
-
-        public QuestionController(QuestionRepository repo, IMapper mapper)
+        public QuestionController(QuestionRepository questionRepository, AnswerRepository answerRepository, IMapper mapper)
         {
-            _repo = repo;
+            _questionRepository = questionRepository;
+            _answerRepository = answerRepository;
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        // LIST
+        public async Task<IActionResult> Index()
         {
-            var questions = _repo.GetList();
-            var models = _mapper.Map<List<QuestionModel>>(questions);
-            return View(models);
+            var questionEntities = await _questionRepository.GetAllAsync();
+            var questionModels = _mapper.Map<List<QuestionModel>>(questionEntities);
+
+            return View(questionModels);
         }
 
-        public IActionResult Add()
+
+        // DETAILS (Question + Answers)
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
-        }
+            var question = await _questionRepository
+                .Where(x => x.Id == id)
+                .Include(x => x.Answers)
+                .FirstOrDefaultAsync();
 
-        [HttpPost]
-        public IActionResult Add(QuestionModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var question = _mapper.Map<Question>(model);
-            _repo.Add(question);
-
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Update(int id)
-        {
-            var question = _repo.GetById(id);
-            var model = _mapper.Map<QuestionModel>(question);
-            return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult Update(QuestionModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var entity = _mapper.Map<Question>(model);
-            _repo.Update(entity);
-
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Delete(int id)
-        {
-            var question = _repo.GetById(id);
-            var model = _mapper.Map<QuestionModel>(question);
-            return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult Delete(QuestionModel model)
-        {
-            _repo.Delete(model.Id);
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Details(int id)
-        {
-            var question = _repo.GetById(id);
             if (question == null)
                 return NotFound();
 
             var model = _mapper.Map<QuestionModel>(question);
             return View(model);
         }
-    }
 
+
+        // CREATE GET
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        // CREATE POST
+        [HttpPost]
+        public async Task<IActionResult> Add(Question model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            await _questionRepository.AddAsync(model);
+            return RedirectToAction("Index");
+        }
+
+        // EDIT GET
+        public async Task<IActionResult> Update(int id)
+        {
+            var question = await _questionRepository.GetByIdAsync(id);
+            if (question == null)
+                return NotFound();
+
+            var model = _mapper.Map<QuestionModel>(question);
+            return View(model);
+        }
+
+        // EDIT POST
+        [HttpPost]
+        public async Task<IActionResult> Update(QuestionModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var entity = _mapper.Map<Question>(model);
+            await _questionRepository.UpdateAsync(entity);
+
+            return RedirectToAction("Index");
+        }
+
+        // DELETE
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _questionRepository.DeleteAsync(id);
+            return RedirectToAction("Index");
+        }
+    }
 }

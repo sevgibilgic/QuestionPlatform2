@@ -1,37 +1,55 @@
-﻿using QuestionPlatform2.Models;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using QuestionPlatform2.Models;
 
-public class GenericRepository<T> where T : class
+namespace QuestionPlatform2.Repositories
 {
-    protected readonly AppDbContext _context;
-
-    public GenericRepository(AppDbContext context)
+    public class GenericRepository<T> where T : class
     {
-        _context = context;
-    }
+        protected readonly AppDbContext _context;
+        private readonly DbSet<T> _dbSet;
 
-    public List<T> GetList() => _context.Set<T>().ToList();
-
-    public T GetById(int id) => _context.Set<T>().Find(id);
-
-    public void Add(T entity)
-    {
-        _context.Set<T>().Add(entity);
-        _context.SaveChanges();
-    }
-
-    public void Update(T entity)
-    {
-        _context.Set<T>().Update(entity);
-        _context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        var ent = _context.Set<T>().Find(id);
-        if (ent != null)
+        public GenericRepository(AppDbContext context)
         {
-            _context.Set<T>().Remove(ent);
-            _context.SaveChanges();
+            _context = context;
+            _dbSet = _context.Set<T>();
+        }
+
+        public async Task<List<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public async Task<T> GetByIdAsync(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(T entity)
+        {
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public IQueryable<T> Where(Expression<Func<T, bool>> expression)
+        {
+            return _dbSet.Where(expression);
         }
     }
 }

@@ -24,10 +24,10 @@ namespace QuestionPlatform2.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var questionEntities = _questionRepository.GetList();
-            var answerEntities = _answerRepository.GetList();
+            var questionEntities = await _questionRepository.GetAllAsync();
+            var answerEntities = await _answerRepository.GetAllAsync();
 
             var questionModels = _mapper.Map<List<QuestionModel>>(questionEntities);
             var answerModels = _mapper.Map<List<AnswerModel>>(answerEntities);
@@ -42,6 +42,7 @@ namespace QuestionPlatform2.Controllers
 
             return View(vm);
         }
+
         public IActionResult Privacy()
         {
             return View();

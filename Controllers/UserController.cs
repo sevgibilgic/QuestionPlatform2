@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace QuestionPlatform2.Controllers
 {
-    public class AdminController : Controller
+    public class UserController : Controller
     {
         public IActionResult Index()
         {
