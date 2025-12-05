@@ -1,7 +1,7 @@
-﻿using QuestionPlatform2.Models;
-using QuestionPlatform2.Repositories;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using QuestionPlatform2.Repositories;
+using QuestionPlatform2.ViewModels;
 
 namespace QuestionPlatform2.Controllers
 {
@@ -10,41 +10,41 @@ namespace QuestionPlatform2.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly QuestionRepository _questionRepository;
         private readonly AnswerRepository _answerRepository;
-        public HomeController(ILogger<HomeController> logger, QuestionRepository questionRepository, AnswerRepository answerRepository)
+        private readonly IMapper _mapper;
+
+        public HomeController(
+            ILogger<HomeController> logger,
+            QuestionRepository questionRepository,
+            AnswerRepository answerRepository,
+            IMapper mapper)
         {
             _logger = logger;
             _questionRepository = questionRepository;
             _answerRepository = answerRepository;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-            var questions = _questionRepository.GetList();
-            var answer = _answerRepository.GetList();
-            questions = questions.Where(s => s.IsActive == true).ToList();
-            return View();
+            var questionEntities = _questionRepository.GetList();
+            var answerEntities = _answerRepository.GetList();
+
+            var questionModels = _mapper.Map<List<QuestionModel>>(questionEntities);
+            var answerModels = _mapper.Map<List<AnswerModel>>(answerEntities);
+
+            questionModels = questionModels.Where(q => q.IsActive).ToList();
+
+            var vm = new HomePageModel
+            {
+                Questions = questionModels,
+                Answers = answerModels
+            };
+
+            return View(vm);
         }
-
-
-        public IActionResult TestWithLayout()
-        {
-            return View();
-        }
-
-        public IActionResult TestWithOutLayout()
-        {
-            return View();
-        }
-
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

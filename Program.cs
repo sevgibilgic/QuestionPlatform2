@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
+using AspNetCoreHero.ToastNotification;
 
 namespace QuestionPlatform2
 {
@@ -16,11 +17,18 @@ namespace QuestionPlatform2
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<QuestionRepository>();
             builder.Services.AddScoped<AnswerRepository>();
+            builder.Services.AddScoped(typeof(GenericRepository<>));
             builder.Services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("sqlCon"));
             });
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            builder.Services.AddNotyf(config =>
+            {
+                config.DurationInSeconds = 10;
+                config.IsDismissable = true;
+                config.Position = NotyfPosition.BottomRight;
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

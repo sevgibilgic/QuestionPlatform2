@@ -19,6 +19,7 @@ namespace QuestionPlatform2.Controllers
             var answers = _answerRepository.GetList();
             return View(answers);
         }
+
         public IActionResult Add()
         {
             return View();
@@ -28,12 +29,12 @@ namespace QuestionPlatform2.Controllers
         public IActionResult Add(AnswerModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
+
             _answerRepository.Add(model);
             return RedirectToAction("Index");
         }
+
         public IActionResult Update(int id)
         {
             var answer = _answerRepository.GetById(id);
@@ -44,12 +45,12 @@ namespace QuestionPlatform2.Controllers
         public IActionResult Update(AnswerModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
+
             _answerRepository.Update(model);
             return RedirectToAction("Index");
         }
+
         public IActionResult Delete(int id)
         {
             var answer = _answerRepository.GetById(id);
@@ -59,9 +60,17 @@ namespace QuestionPlatform2.Controllers
         [HttpPost]
         public IActionResult Delete(AnswerModel model)
         {
-
             _answerRepository.Delete(model.Id);
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Details(int id)
+        {
+            var answer = _answerRepository.GetById(id);
+            if (answer == null)
+                return NotFound();
+
+            return View(answer);
         }
     }
 }
