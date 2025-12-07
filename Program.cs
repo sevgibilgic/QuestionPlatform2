@@ -20,6 +20,8 @@ namespace QuestionPlatform2
             builder.Services.AddScoped<QuestionRepository>();
             builder.Services.AddScoped<AnswerRepository>();
             builder.Services.AddScoped<UserRepository>();
+            builder.Services.AddScoped<FavoriteRepository>();
+
             builder.Services.AddScoped(typeof(GenericRepository<>));
             builder.Services.AddDbContext<AppDbContext>(opt =>
             {

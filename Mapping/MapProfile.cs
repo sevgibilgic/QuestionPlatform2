@@ -12,6 +12,7 @@ namespace QuestionPlatform2.Mapping
             CreateMap<Answer, AnswerModel>().ReverseMap();
             CreateMap<User, UserModel>().ReverseMap();
             CreateMap<User, RegisterModel>().ReverseMap();
+            CreateMap<Favorite, FavoriteModel>().ReverseMap();
         }
     }
 }

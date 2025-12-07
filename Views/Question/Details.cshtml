@@ -4,11 +4,21 @@
 @model QuestionPlatform2.ViewModels.QuestionModel
 @section CardHeader {
     <span>Detaylar</span>
+
 }
 <h2>@Model.Title</h2>
+
 <p>@Model.Content</p>
 
 <hr />
+
+<button id="btnFavorite"
+        data-question="@Model.Id"
+        data-user="1"
+        class="btn btn-outline-danger mb-3">
+    ❤️ Favori
+</button>
+
 
 <h3>Cevaplar:</h3>
 
@@ -25,3 +35,39 @@ else
         }
     </ul>
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $("#btnFavorite").click(function () {
+
+        var questionId = $(this).data("question");
+        var userId = $(this).data("user");
+
+        $.ajax({
+            url: "/Favorite/ToggleAjax",
+            type: "POST",
+            data: {
+                QuestionId: questionId,
+                UserId: userId
+            },
+            success: function (res) {
+
+                if (res.data.isFavorite) {
+                    $("#btnFavorite").text("💔 Favoriden Çıkar");
+                } else {
+                    $("#btnFavorite").text("❤️ Favori");
+                }
+
+                alert(res.message);
+            },
+
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Favori işlemi sırasında bir hata oluştu.");
+            }
+        });
+
+    });
+</script>
+
+

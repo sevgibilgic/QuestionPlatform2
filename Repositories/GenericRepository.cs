@@ -51,5 +51,15 @@ namespace QuestionPlatform2.Repositories
         {
             return _dbSet.Where(expression);
         }
+        public async Task<List<T>> WhereAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().Where(predicate).ToListAsync();
+        }
+        public IQueryable<T> GetQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
+
+
     }
 }

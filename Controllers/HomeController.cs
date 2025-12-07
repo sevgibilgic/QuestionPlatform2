@@ -92,7 +92,9 @@ namespace QuestionPlatform2.Controllers
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.Role, user.Role)
+        new Claim(ClaimTypes.Role, user.Role),
+
+        new Claim("UserId", user.Id.ToString())
     };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -135,6 +137,10 @@ namespace QuestionPlatform2.Controllers
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+        public IActionResult MyFavorite()
         {
             return View();
         }

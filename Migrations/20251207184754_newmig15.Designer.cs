@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuestionPlatform2.Models;
 
@@ -11,9 +12,11 @@ using QuestionPlatform2.Models;
 namespace QuestionPlatform2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207184754_newmig15")]
+    partial class newmig15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,28 +116,28 @@ namespace QuestionPlatform2.Migrations
                         {
                             Id = 1,
                             Content = "İçerik 1",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2252),
+                            CreatedAt = new DateTime(2025, 12, 7, 21, 47, 54, 542, DateTimeKind.Local).AddTicks(4814),
                             IsActive = true,
                             Title = "Soru Başlığı 1",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2253)
+                            UpdatedAt = new DateTime(2025, 12, 7, 21, 47, 54, 542, DateTimeKind.Local).AddTicks(4815)
                         },
                         new
                         {
                             Id = 2,
                             Content = "İçerik 2",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2257),
+                            CreatedAt = new DateTime(2025, 12, 7, 21, 47, 54, 542, DateTimeKind.Local).AddTicks(4818),
                             IsActive = true,
                             Title = "Soru Başlığı 2",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2258)
+                            UpdatedAt = new DateTime(2025, 12, 7, 21, 47, 54, 542, DateTimeKind.Local).AddTicks(4819)
                         },
                         new
                         {
                             Id = 3,
                             Content = "İçerik 3",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2261),
+                            CreatedAt = new DateTime(2025, 12, 7, 21, 47, 54, 542, DateTimeKind.Local).AddTicks(4821),
                             IsActive = false,
                             Title = "Soru Başlığı 3",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2261)
+                            UpdatedAt = new DateTime(2025, 12, 7, 21, 47, 54, 542, DateTimeKind.Local).AddTicks(4822)
                         });
                 });
 

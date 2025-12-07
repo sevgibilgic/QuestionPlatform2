@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuestionPlatform2.Models;
 
@@ -11,9 +12,11 @@ using QuestionPlatform2.Models;
 namespace QuestionPlatform2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207182441_newmig14")]
+    partial class newmig14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,30 @@ namespace QuestionPlatform2.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Favorites");
+                });
 
             modelBuilder.Entity("QuestionPlatform2.Models.Answer", b =>
                 {
@@ -48,32 +75,6 @@ namespace QuestionPlatform2.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("QuestionPlatform2.Models.Favorite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("QuestionPlatform2.Models.Question", b =>
@@ -113,28 +114,28 @@ namespace QuestionPlatform2.Migrations
                         {
                             Id = 1,
                             Content = "İçerik 1",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2252),
+                            CreatedAt = new DateTime(2025, 12, 7, 21, 24, 41, 570, DateTimeKind.Local).AddTicks(9705),
                             IsActive = true,
                             Title = "Soru Başlığı 1",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2253)
+                            UpdatedAt = new DateTime(2025, 12, 7, 21, 24, 41, 570, DateTimeKind.Local).AddTicks(9707)
                         },
                         new
                         {
                             Id = 2,
                             Content = "İçerik 2",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2257),
+                            CreatedAt = new DateTime(2025, 12, 7, 21, 24, 41, 570, DateTimeKind.Local).AddTicks(9711),
                             IsActive = true,
                             Title = "Soru Başlığı 2",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2258)
+                            UpdatedAt = new DateTime(2025, 12, 7, 21, 24, 41, 570, DateTimeKind.Local).AddTicks(9711)
                         },
                         new
                         {
                             Id = 3,
                             Content = "İçerik 3",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2261),
+                            CreatedAt = new DateTime(2025, 12, 7, 21, 24, 41, 570, DateTimeKind.Local).AddTicks(9714),
                             IsActive = false,
                             Title = "Soru Başlığı 3",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2261)
+                            UpdatedAt = new DateTime(2025, 12, 7, 21, 24, 41, 570, DateTimeKind.Local).AddTicks(9715)
                         });
                 });
 
@@ -183,6 +184,17 @@ namespace QuestionPlatform2.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Favorite", b =>
+                {
+                    b.HasOne("QuestionPlatform2.Models.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("QuestionPlatform2.Models.Answer", b =>
                 {
                     b.HasOne("QuestionPlatform2.Models.Question", "Question")
@@ -192,25 +204,6 @@ namespace QuestionPlatform2.Migrations
                         .IsRequired();
 
                     b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("QuestionPlatform2.Models.Favorite", b =>
-                {
-                    b.HasOne("QuestionPlatform2.Models.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QuestionPlatform2.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("QuestionPlatform2.Models.Question", b =>
