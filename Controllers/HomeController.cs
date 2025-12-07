@@ -76,7 +76,6 @@ namespace QuestionPlatform2.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
             if (!ModelState.IsValid)
