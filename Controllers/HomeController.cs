@@ -16,12 +16,15 @@ namespace QuestionPlatform2.Controllers
         private readonly UserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly INotyfService _notyf;
+        private readonly IConfiguration _config;
 
-        public HomeController(UserRepository userRepository, IMapper mapper, INotyfService notyf)
+
+        public HomeController(UserRepository userRepository, IMapper mapper, INotyfService notyf, IConfiguration config)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _notyf = notyf;
+            _config = config;
         }
 
         public IActionResult Login() => View();
@@ -121,13 +124,19 @@ namespace QuestionPlatform2.Controllers
 
         private string HashPassword(string password)
         {
-            return password.MD5();
+            var salt = _config.GetValue<string>("AppSettings:MD5Salt");
+            var combined = password + salt;
+            return combined.MD5();
         }
+
 
         private bool VerifyPassword(string hashed, string plain)
         {
-            return hashed == plain.MD5();
+            var salt = _config.GetValue<string>("AppSettings:MD5Salt");
+            var combined = plain + salt;
+            return hashed == combined.MD5();
         }
+
 
         public IActionResult AccessDenied() => View();
 
