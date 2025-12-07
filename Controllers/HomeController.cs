@@ -65,7 +65,7 @@ namespace QuestionPlatform2.Controllers
             }
             else
             {
-                user.PhotoUrl = "/uploads/default.jpg"; // NULL gitmesin
+                user.PhotoUrl = "/uploads/default.jpg"; 
             }
 
 
