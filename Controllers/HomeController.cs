@@ -1,5 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using NETCore.Encrypt.Extensions;
+using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
 using QuestionPlatform2.ViewModels;
 
@@ -7,43 +13,129 @@ namespace QuestionPlatform2.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly QuestionRepository _questionRepository;
-        private readonly AnswerRepository _answerRepository;
+        private readonly UserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly INotyfService _notyf;
 
-        public HomeController(
-            ILogger<HomeController> logger,
-            QuestionRepository questionRepository,
-            AnswerRepository answerRepository,
-            IMapper mapper)
+        public HomeController(UserRepository userRepository, IMapper mapper, INotyfService notyf)
         {
-            _logger = logger;
-            _questionRepository = questionRepository;
-            _answerRepository = answerRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
+            _notyf = notyf;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Login() => View();
+        public IActionResult Register() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterModel model)
         {
-            var questionEntities = await _questionRepository.GetAllAsync();
-            var answerEntities = await _answerRepository.GetAllAsync();
+            if (!ModelState.IsValid)
+                return View(model);
 
-            var questionModels = _mapper.Map<List<QuestionModel>>(questionEntities);
-            var answerModels = _mapper.Map<List<AnswerModel>>(answerEntities);
-
-            questionModels = questionModels.Where(q => q.IsActive).ToList();
-
-            var vm = new HomePageModel
+            if (await _userRepository.ExistsByUserName(model.UserName))
             {
-                Questions = questionModels,
-                Answers = answerModels
-            };
+                _notyf.Error("Kullanıcı adı kayıtlı!");
+                return View(model);
+            }
 
-            return View(vm);
+            if (await _userRepository.ExistsByEmail(model.Email))
+            {
+                _notyf.Error("E-posta adresi kayıtlı!");
+                return View(model);
+            }
+
+            var user = _mapper.Map<User>(model);
+            user.Password = HashPassword(model.Password);
+            user.Role = "User";
+            user.Created = DateTime.Now;
+            user.Updated = DateTime.Now;
+
+            if (model.PhotoFile != null && model.PhotoFile.Length > 0)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(model.PhotoFile.FileName);
+                var path = Path.Combine("wwwroot/uploads/", fileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await model.PhotoFile.CopyToAsync(stream);
+                }
+
+                user.PhotoUrl = "/uploads/" + fileName;
+            }
+            else
+            {
+                user.PhotoUrl = "/uploads/default.jpg"; // NULL gitmesin
+            }
+
+
+            await _userRepository.AddAsync(user);
+
+            _notyf.Success("Kayıt başarılı! Giriş yapabilirsiniz.");
+            return RedirectToAction("Login");
         }
+
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userRepository.GetByUserName(model.UserName);
+            if (user == null || !VerifyPassword(user.Password, model.Password))
+            {
+                _notyf.Error("Kullanıcı adı veya parola hatalı!");
+                return View(model);
+            }
+
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.Role, user.Role)
+    };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                new AuthenticationProperties { IsPersistent = model.KeepMe }
+            );
+
+            if (user.Role == "Admin")
+                return RedirectToAction("Index", "Admin");
+
+            return RedirectToAction("Index", "User");
+        }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
+
+        private string HashPassword(string password)
+        {
+            return password.MD5();
+        }
+
+        private bool VerifyPassword(string hashed, string plain)
+        {
+            return hashed == plain.MD5();
+        }
+
+        public IActionResult AccessDenied() => View();
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Index()
         {
             return View();
         }

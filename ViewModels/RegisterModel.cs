@@ -32,6 +32,6 @@ namespace QuestionPlatform2.ViewModels
 
 
         [Display(Name = "Fotoğraf")]
-        public IFormFile PhotoFile { get; set; }
+        public IFormFile? PhotoFile { get; set; }
     }
 }

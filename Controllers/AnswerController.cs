@@ -16,7 +16,6 @@ namespace QuestionPlatform2.Controllers
             _questionRepository = questionRepository;
         }
 
-        // ADD ANSWER (GET)
         public async Task<IActionResult> Add(int questionId)
         {
             var question = await _questionRepository.GetByIdAsync(questionId);
@@ -31,7 +30,6 @@ namespace QuestionPlatform2.Controllers
             return View(model);
         }
 
-        // ADD ANSWER (POST)
         [HttpPost]
         public async Task<IActionResult> Add(Answer model, int questionId)
         {
@@ -48,8 +46,6 @@ namespace QuestionPlatform2.Controllers
 
             return RedirectToAction("Details", "Question", new { id = questionId });
         }
-
-        // EDIT ANSWER (GET)
         public async Task<IActionResult> Edit(int id)
         {
             var answer = await _answerRepository
@@ -63,7 +59,6 @@ namespace QuestionPlatform2.Controllers
             return View(answer);
         }
 
-        // EDIT ANSWER (POST)
         [HttpPost]
         public async Task<IActionResult> Edit(Answer model)
         {
@@ -75,7 +70,6 @@ namespace QuestionPlatform2.Controllers
             return RedirectToAction("Details", "Question", new { id = model.Question.Id });
         }
 
-        // DELETE ANSWER
         public async Task<IActionResult> Delete(int id)
         {
             var answer = await _answerRepository

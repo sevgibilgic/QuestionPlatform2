@@ -19,7 +19,6 @@ namespace QuestionPlatform2.Controllers
             _mapper = mapper;
         }
 
-        // LIST
         public async Task<IActionResult> Index()
         {
             var questionEntities = await _questionRepository.GetAllAsync();
@@ -29,7 +28,6 @@ namespace QuestionPlatform2.Controllers
         }
 
 
-        // DETAILS (Question + Answers)
         public async Task<IActionResult> Details(int id)
         {
             var question = await _questionRepository
@@ -45,13 +43,11 @@ namespace QuestionPlatform2.Controllers
         }
 
 
-        // CREATE GET
         public IActionResult Add()
         {
             return View();
         }
 
-        // CREATE POST
         [HttpPost]
         public async Task<IActionResult> Add(Question model)
         {
@@ -62,7 +58,6 @@ namespace QuestionPlatform2.Controllers
             return RedirectToAction("Index");
         }
 
-        // EDIT GET
         public async Task<IActionResult> Update(int id)
         {
             var question = await _questionRepository.GetByIdAsync(id);
@@ -73,7 +68,6 @@ namespace QuestionPlatform2.Controllers
             return View(model);
         }
 
-        // EDIT POST
         [HttpPost]
         public async Task<IActionResult> Update(QuestionModel model)
         {
@@ -86,7 +80,6 @@ namespace QuestionPlatform2.Controllers
             return RedirectToAction("Index");
         }
 
-        // DELETE
         public async Task<IActionResult> Delete(int id)
         {
             await _questionRepository.DeleteAsync(id);

@@ -33,6 +33,6 @@ namespace QuestionPlatform2.ViewModels
         public string Role { get; set; }
 
         [Display(Name = "Fotoğraf")]
-        public string PhotoUrl { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }

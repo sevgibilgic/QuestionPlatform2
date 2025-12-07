@@ -1,9 +1,11 @@
 using System.Reflection;
+using AspNetCoreHero.ToastNotification;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
-using AspNetCoreHero.ToastNotification;
 
 namespace QuestionPlatform2
 {
@@ -17,11 +19,13 @@ namespace QuestionPlatform2
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<QuestionRepository>();
             builder.Services.AddScoped<AnswerRepository>();
+            builder.Services.AddScoped<UserRepository>();
             builder.Services.AddScoped(typeof(GenericRepository<>));
             builder.Services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("sqlCon"));
             });
+            builder.Services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
             builder.Services.AddNotyf(config =>
             {
@@ -29,6 +33,17 @@ namespace QuestionPlatform2
                 config.IsDismissable = true;
                 config.Position = NotyfPosition.BottomRight;
             });
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+           .AddCookie(opt =>
+               {
+                 opt.Cookie.Name = "CookieAuthApp";
+                 opt.ExpireTimeSpan = TimeSpan.FromDays(3);
+                 opt.LoginPath = "/Home/Login";
+                 opt.LogoutPath = "/Home/Logout";
+                 opt.AccessDeniedPath = "/Home/AccessDenied";
+                 opt.SlidingExpiration = false;
+               });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,11 +59,12 @@ namespace QuestionPlatform2
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Login}/{id?}");
 
             app.Run();
         }
