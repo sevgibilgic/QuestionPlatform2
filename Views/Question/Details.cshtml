@@ -17,7 +17,7 @@
 
     <button id="btnFavorite"
             data-question="@Model.Id"
-            data-user="1"
+            data-user="@User.FindFirst("UserId")?.Value"
             class="btn btn-outline-danger btn-lg mb-4 px-4">
         ❤️ Favori
     </button>
@@ -40,6 +40,7 @@
 
 
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     $(document).ready(function() {
