@@ -48,6 +48,48 @@ namespace QuestionPlatform2.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("Answers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AnswerContent = "Üye olmak için sağ üstteki 'Kayıt Ol' butonuna tıklayın.",
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(952),
+                            QuestionId = 1,
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(953)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AnswerContent = "Şifre sıfırlama sayfasından e-posta adresinizi girerek yeni şifre oluşturabilirsiniz.",
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(956),
+                            QuestionId = 2,
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(957)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AnswerContent = "Evet, tüm veriler SSL ile şifrelenir ve gizliliğiniz korunur.",
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(959),
+                            QuestionId = 3,
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(960)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AnswerContent = "Profil ayarlarından istediğiniz değişiklikleri yapabilirsiniz.",
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(962),
+                            QuestionId = 4,
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(963)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AnswerContent = "Müşteri hizmetleri ile iletişime geçebilirsiniz.",
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(965),
+                            QuestionId = 5,
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(966)
+                        });
                 });
 
             modelBuilder.Entity("QuestionPlatform2.Models.Favorite", b =>
@@ -113,28 +155,28 @@ namespace QuestionPlatform2.Migrations
                         {
                             Id = 1,
                             Content = "İçerik 1",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2252),
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(722),
                             IsActive = true,
                             Title = "Soru Başlığı 1",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2253)
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(723)
                         },
                         new
                         {
                             Id = 2,
                             Content = "İçerik 2",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2257),
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(727),
                             IsActive = true,
                             Title = "Soru Başlığı 2",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2258)
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(728)
                         },
                         new
                         {
                             Id = 3,
                             Content = "İçerik 3",
-                            CreatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2261),
+                            CreatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(731),
                             IsActive = false,
                             Title = "Soru Başlığı 3",
-                            UpdatedAt = new DateTime(2025, 12, 7, 22, 52, 19, 549, DateTimeKind.Local).AddTicks(2261)
+                            UpdatedAt = new DateTime(2025, 12, 8, 4, 13, 10, 63, DateTimeKind.Local).AddTicks(731)
                         });
                 });
 

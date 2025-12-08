@@ -12,6 +12,11 @@ namespace QuestionPlatform2.Repositories
             _context = context;
         }
 
+        public List<User> GetAllUsers()
+        {
+            return _context.Users.ToList();
+        }
+
         public async Task<bool> ExistsByUserName(string userName)
         {
             return await _context.Users.AnyAsync(u => u.UserName == userName);

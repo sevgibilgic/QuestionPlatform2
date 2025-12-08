@@ -1,9 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Admin Page";
-
+    ViewData["Title"] = "Admin Bilgileri";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Admin Page</h1>
-</div>
+@using System.Security.Claims
+
+@if (!User.IsInRole("Admin"))
+{
+    <div class="alert alert-danger mt-4">
+        Bu sayfaya erişim yetkiniz yok.
+    </div>
+}
+else
+{
+    <div class="container mt-5">
+        <h1 class="display-3 mb-4 text-primary">Admin Bilgileri</h1>
+
+        <div class="card shadow-lg p-4" style="max-width: 700px;">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-4 text-center">
+                    @{
+                        var photoUrl = User.Claims.FirstOrDefault(c => c.Type == "PhotoUrl")?.Value;
+                        if (string.IsNullOrEmpty(photoUrl))
+                        {
+                            photoUrl = "~/sbadmin/img/undraw_profile.svg";
+                        }
+
+                        var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Belirtilmemiş";
+                    }
+                    <img src="@photoUrl" class="rounded-circle mb-3" alt="Profil Fotoğrafı" width="180" height="180" />
+                </div>
+                <div class="col-md-8 p-3">
+                    <h2 class="fw-bold display-5">@User.Identity.Name</h2>
+                    <p class="fs-5"><strong>Email:</strong> @email</p>
+                    <p class="fs-5"><strong>Rol:</strong> @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

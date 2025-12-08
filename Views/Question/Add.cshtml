@@ -2,39 +2,43 @@
     Layout = "_LayoutAdmin";
 }
 @model QuestionPlatform2.ViewModels.QuestionModel
+
 @section CardHeader {
-    <span>Soru Ekle</span>
+    <span class="fs-4 fw-bold">Soru Ekle</span>
 }
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="Question" asp-action="Add" method="post">
+<div class="row d-flex justify-content-center mt-4">
+    <div class="col-md-6">
 
-            <div class="mb-2">
-                <label asp-for="Title"></label>
-                <input asp-for="Title" class="form-control" />
-                <span class="text-danger" asp-validation-for="Title"></span>
-            </div>
-            <div class="mb-2">
-                <label asp-for="Content"></label>
-                <input asp-for="Content" class="form-control" />
-                <span class="text-danger" asp-validation-for="Content"></span>
-            </div>
-            <div class="mb-2">
-                <label asp-for="ImageUrl"></label>
-                <textarea asp-for="ImageUrl" class="form-control" rows="3"></textarea>
-                <span class="text-danger" asp-validation-for="ImageUrl"></span>
-            </div>
-            <div class="mb-2">
+        <div class="card shadow-sm p-4">
 
-                <input asp-for="IsActive" class="form-check-input" />
-                <label asp-for="IsActive"></label>
-                <span class="text-danger" asp-validation-for="IsActive"></span>
-            </div>
-            <div class="mb-2">
-                <input type="submit" value="Kaydet" class="btn btn-primary btn-sm" />
-            </div>
-        </form>
+            <form asp-controller="Question" asp-action="Add" method="post">
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-semibold fs-5"></label>
+                    <input asp-for="Title" class="form-control form-control-lg" />
+                    <span class="text-danger" asp-validation-for="Title"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label fw-semibold fs-5"></label>
+                    <textarea asp-for="Content" rows="4" class="form-control form-control-lg"></textarea>
+                    <span class="text-danger" asp-validation-for="Content"></span>
+                </div>
+
+                <div class="form-check mb-3 ms-1">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label fs-5 ms-1"></label>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary btn-lg px-4">Kaydet</button>
+                </div>
+
+            </form>
+
+        </div>
+
     </div>
 </div>
 

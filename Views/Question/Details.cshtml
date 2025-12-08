@@ -2,72 +2,73 @@
     Layout = "_LayoutAdmin";
 }
 @model QuestionPlatform2.ViewModels.QuestionModel
+
 @section CardHeader {
-    <span>Detaylar</span>
 
 }
-<h2>@Model.Title</h2>
 
-<p>@Model.Content</p>
+<div class="container mt-4">
 
-<hr />
+    <h2 class="fs-2 fw-bold mb-3">@Model.Title</h2>
 
-<button id="btnFavorite"
-        data-question="@Model.Id"
-        data-user="1"
-        class="btn btn-outline-danger mb-3">
-    ❤️ Favori
-</button>
+    <p class="fs-5">@Model.Content</p>
 
+    <hr class="my-4" />
 
-<h3>Cevaplar:</h3>
+    <button id="btnFavorite"
+            data-question="@Model.Id"
+            data-user="1"
+            class="btn btn-outline-danger btn-lg mb-4 px-4">
+        ❤️ Favori
+    </button>
 
-@if (Model.Answers == null || !Model.Answers.Any())
-{
-    <p>Bu soruya henüz cevap eklenmemiş.</p>
-}
-else
-{
-    <ul>
+    <h3 class="fs-3 fw-semibold mt-4">Cevaplar:</h3>
+
+    @if (Model.Answers == null || !Model.Answers.Any())
+    {
+        <p class="fs-4 mt-2">Bu soruya henüz cevap eklenmemiş.</p>
+    }
+    else
+    {
         @foreach (var a in Model.Answers)
         {
-            <li>@a.AnswerContent</li>
+            <div class="fs-4 mt-3 p-3 border rounded shadow-sm">
+                @a.AnswerContent
+            </div>
         }
-    </ul>
-}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    }
+
+
+</div>
 
 <script>
-    $("#btnFavorite").click(function () {
+    $(document).ready(function() {
+        $("#btnFavorite").click(function () {
 
-        var questionId = $(this).data("question");
-        var userId = $(this).data("user");
+            var questionId = $(this).data("question");
+            var userId = $(this).data("user");
 
-        $.ajax({
-            url: "/Favorite/ToggleAjax",
-            type: "POST",
-            data: {
-                QuestionId: questionId,
-                UserId: userId
-            },
-            success: function (res) {
+            $.ajax({
+                url: "/Favorite/ToggleAjax",
+                type: "POST",
+                data: {
+                    QuestionId: questionId,
+                    UserId: userId
+                },
+                success: function (res) {
+                    if (res.data && res.data.isFavorite) {
+                        $("#btnFavorite").text("💔 Favoriden Çıkar");
+                    } else {
+                        $("#btnFavorite").text("❤️ Favori");
+                    }
 
-                if (res.data.isFavorite) {
-                    $("#btnFavorite").text("💔 Favoriden Çıkar");
-                } else {
-                    $("#btnFavorite").text("❤️ Favori");
+                    alert(res.message);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Hatası:", status, error);
+                    alert("Favorilere ekleme sırasında bir hata oluştu!");
                 }
-
-                alert(res.message);
-            },
-
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Favori işlemi sırasında bir hata oluştu.");
-            }
+            });
         });
-
     });
 </script>
-
-

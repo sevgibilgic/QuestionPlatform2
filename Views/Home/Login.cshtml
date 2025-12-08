@@ -24,9 +24,26 @@
     <!-- Custom styles for this template-->
     <link href="~/sbadmin/css/sb-admin-2.min.css" rel="stylesheet">
 
+    <style>
+        body {
+            background: url('/bg/background.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+        }
+
+            .card .text-center h1,
+            .card .text-center h4,
+            .card .form-control {
+                color: #333;
+            }
+    </style>
+
 </head>
 
-<body class="bg-gradient-primary">
+<body>
 
     <div class="container">
 
@@ -60,22 +77,18 @@
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input" asp-for="KeepMe">
                                                 <label class="custom-control-label" asp-for="KeepMe">
-
                                                 </label>
                                             </div>
                                         </div>
                                         <input type="submit" class="btn btn-primary btn-user btn-block" value="Oturum Aç" />
-
                                     </form>
                                     <hr>
-                                    @*   <div class="text-center">
-                                    <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div> *@
                                     <div class="text-center">
                                         <a class="small" asp-action="Register">Yeni Kayıt</a>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -96,6 +109,7 @@
     <!-- Custom scripts for all pages-->
     <script src="~/sbadmin/js/sb-admin-2.min.js"></script>
     @await Component.InvokeAsync("Notyf")
+
 </body>
 
 </html>
