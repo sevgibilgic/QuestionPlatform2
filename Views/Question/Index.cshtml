@@ -2,9 +2,23 @@
     Layout = "_LayoutAdmin";
 }
 @section CardHeader {
-    <span class="fs-4 fw-bold">Sorularım</span>
+    <span class="fs-4 fw-bold">Sorular</span>
 }
 @model List<QuestionPlatform2.ViewModels.QuestionModel>
+
+<p class="fs-2 fw-bold">Toplam Soru: <span id="questionCount">@Model.Count</span></p>
+<script src="~/js/signalr.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/general-hub")
+        .build();
+
+    connection.on("onQuestionAdded", function (count) {
+        document.getElementById("questionCount").innerText = count;
+    });
+
+    connection.start().catch(err => console.error(err.toString()));
+</script>
 
 <a asp-action="Add" asp-controller="Question" class="btn btn-primary btn-lg mb-3">➕ Ekle</a>
 

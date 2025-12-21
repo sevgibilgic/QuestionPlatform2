@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using QuestionPlatform2.Hubs;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
 using QuestionPlatform2.ViewModels;
@@ -13,15 +15,18 @@ namespace QuestionPlatform2.Controllers
         private readonly QuestionRepository _questionRepository;
         private readonly AnswerRepository _answerRepository;
         private readonly IMapper _mapper;
+        private readonly IHubContext<GeneralHub> _generalHub;
 
         public QuestionController(
             QuestionRepository questionRepository,
             AnswerRepository answerRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IHubContext<GeneralHub> generalHub)
         {
             _questionRepository = questionRepository;
             _answerRepository = answerRepository;
             _mapper = mapper;
+            _generalHub = generalHub;
         }
 
         public async Task<IActionResult> Index()
@@ -58,13 +63,15 @@ namespace QuestionPlatform2.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var entity = _mapper.Map<Question>(model);
-            entity.CreatedAt = DateTime.Now;
-            entity.UpdatedAt = DateTime.Now;
+            var question = _mapper.Map<Question>(model);
+            question.CreatedAt = DateTime.Now;
+            question.UpdatedAt = DateTime.Now;
 
-            await _questionRepository.AddAsync(entity);
-            return RedirectToAction(nameof(Index));
+            await _questionRepository.AddAsync(question);
+
+            return RedirectToAction("Index");
         }
+
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id)
