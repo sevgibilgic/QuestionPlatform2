@@ -1,20 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuestionPlatform2.Models
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext
+        : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
 
-        public AppDbContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
         {
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.Seed();
+            base.OnModelCreating(builder);
+
+            
         }
     }
 }

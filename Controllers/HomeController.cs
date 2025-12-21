@@ -1,34 +1,39 @@
-﻿using System.Security.Claims;
-using AspNetCoreHero.ToastNotification.Abstractions;
-using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NETCore.Encrypt.Extensions;
 using QuestionPlatform2.Models;
-using QuestionPlatform2.Repositories;
 using QuestionPlatform2.ViewModels;
 
 namespace QuestionPlatform2.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserRepository _userRepository;
-        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly INotyfService _notyf;
-        private readonly IConfiguration _config;
 
-
-        public HomeController(UserRepository userRepository, IMapper mapper, INotyfService notyf, IConfiguration config)
+        public HomeController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole<int>> roleManager,
+            INotyfService notyf)
         {
-            _userRepository = userRepository;
-            _mapper = mapper;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
             _notyf = notyf;
-            _config = config;
         }
 
-        public IActionResult Login() => View();
-        public IActionResult Register() => View();
+        public IActionResult Login()
+            {
+                return View();
+            }
+        public IActionResult Register()
+            {
+                return View();
+            }
+
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
@@ -36,125 +41,102 @@ namespace QuestionPlatform2.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            if (await _userRepository.ExistsByUserName(model.UserName))
+            if (model.Password != model.PasswordConfirm)
             {
-                _notyf.Error("Kullanıcı adı kayıtlı!");
+                _notyf.Error("Parolalar eşleşmiyor!");
                 return View(model);
             }
 
-            if (await _userRepository.ExistsByEmail(model.Email))
+            var user = new ApplicationUser
             {
-                _notyf.Error("E-posta adresi kayıtlı!");
-                return View(model);
-            }
+                UserName = model.UserName,
+                Email = model.Email,
+                FullName = model.FullName,
+                PhotoUrl = "/uploads/default.jpg"
+            };
 
-            var user = _mapper.Map<User>(model);
-            user.Password = HashPassword(model.Password);
-            user.Role = "User";
-            user.Created = DateTime.Now;
-            user.Updated = DateTime.Now;
-
+            
             if (model.PhotoFile != null && model.PhotoFile.Length > 0)
             {
                 var fileName = Guid.NewGuid() + Path.GetExtension(model.PhotoFile.FileName);
-                var path = Path.Combine("wwwroot/uploads/", fileName);
+                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-                using (var stream = new FileStream(path, FileMode.Create))
+                if (!Directory.Exists(uploadFolder))
+                    Directory.CreateDirectory(uploadFolder);
+
+                var filePath = Path.Combine(uploadFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await model.PhotoFile.CopyToAsync(stream);
                 }
 
                 user.PhotoUrl = "/uploads/" + fileName;
             }
-            else
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
             {
-                user.PhotoUrl = "/uploads/default.jpg"; 
+                foreach (var error in result.Errors)
+                    _notyf.Error(error.Description);
+
+                return View(model);
             }
 
+            
+            if (!await _roleManager.RoleExistsAsync("User"))
+                await _roleManager.CreateAsync(new IdentityRole<int>("User"));
 
-            await _userRepository.AddAsync(user);
+            await _userManager.AddToRoleAsync(user, "User");
 
             _notyf.Success("Kayıt başarılı! Giriş yapabilirsiniz.");
-            return RedirectToAction("Login");
+            return RedirectToAction(nameof(Login));
         }
 
+        
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = await _userRepository.GetByUserName(model.UserName);
-            if (user == null || !VerifyPassword(user.Password, model.Password))
+            var result = await _signInManager.PasswordSignInAsync(
+                model.UserName,
+                model.Password,
+                model.KeepMe,
+                lockoutOnFailure: false);
+
+            if (!result.Succeeded)
             {
                 _notyf.Error("Kullanıcı adı veya parola hatalı!");
                 return View(model);
             }
 
-            var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.Role, user.Role),
-        new Claim(ClaimTypes.Email, user.Email ?? ""),
-        new Claim("PhotoUrl", user.PhotoUrl ?? ""),
+            var user = await _userManager.FindByNameAsync(model.UserName);
 
-        new Claim("UserId", user.Id.ToString())
-    };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties { IsPersistent = model.KeepMe }
-            );
-
-            if (user.Role == "Admin")
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
                 return RedirectToAction("Index", "Admin");
 
             return RedirectToAction("Index", "User");
         }
 
-
+        
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
         }
-
-        private string HashPassword(string password)
-        {
-            var salt = _config.GetValue<string>("AppSettings:MD5Salt");
-            var combined = password + salt;
-            return combined.MD5();
-        }
-
-
-        private bool VerifyPassword(string hashed, string plain)
-        {
-            var salt = _config.GetValue<string>("AppSettings:MD5Salt");
-            var combined = plain + salt;
-            return hashed == combined.MD5();
-        }
-
 
         public IActionResult AccessDenied() => View();
 
         public IActionResult Privacy()
-        {
-            return View();
-        }
-
+            {
+               return View();
+            }
         public IActionResult Index()
-        {
-            return View();
-        }
-        public IActionResult MyFavorite()
-        {
-            return View();
-        }
-        
+            {
+                return View();
+            }
     }
 }

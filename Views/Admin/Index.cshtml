@@ -23,7 +23,7 @@ else
                         var photoUrl = User.Claims.FirstOrDefault(c => c.Type == "PhotoUrl")?.Value;
                         if (string.IsNullOrEmpty(photoUrl))
                         {
-                            photoUrl = "~/sbadmin/img/undraw_profile.svg";
+                            photoUrl = "/uploads/default.jpg";
                         }
 
                         var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Belirtilmemiş";

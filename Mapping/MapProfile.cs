@@ -10,8 +10,8 @@ namespace QuestionPlatform2.Mapping
         {
             CreateMap<Question, QuestionModel>().ReverseMap();
             CreateMap<Answer, AnswerModel>().ReverseMap();
-            CreateMap<User, UserModel>().ReverseMap();
-            CreateMap<User, RegisterModel>().ReverseMap();
+            CreateMap<ApplicationUser, UserModel>().ReverseMap();
+            CreateMap<ApplicationUser, RegisterModel>().ReverseMap();
             CreateMap<Favorite, FavoriteModel>().ReverseMap();
         }
     }

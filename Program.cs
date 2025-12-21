@@ -1,7 +1,7 @@
 using System.Reflection;
 using AspNetCoreHero.ToastNotification;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using QuestionPlatform2.Models;
@@ -19,7 +19,6 @@ namespace QuestionPlatform2
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<QuestionRepository>();
             builder.Services.AddScoped<AnswerRepository>();
-            builder.Services.AddScoped<UserRepository>();
             builder.Services.AddScoped<FavoriteRepository>();
 
             builder.Services.AddScoped(typeof(GenericRepository<>));
@@ -35,16 +34,26 @@ namespace QuestionPlatform2
                 config.IsDismissable = true;
                 config.Position = NotyfPosition.BottomRight;
             });
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-           .AddCookie(opt =>
-               {
-                 opt.Cookie.Name = "CookieAuthApp";
-                 opt.ExpireTimeSpan = TimeSpan.FromDays(3);
-                 opt.LoginPath = "/Home/Login";
-                 opt.LogoutPath = "/Home/Logout";
-                 opt.AccessDeniedPath = "/Home/AccessDenied";
-                 opt.SlidingExpiration = false;
-               });
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+            {
+                 options.Password.RequireDigit = false;
+                 options.Password.RequireLowercase = false;
+                 options.Password.RequireUppercase = false;
+                 options.Password.RequireNonAlphanumeric = false;
+                 options.Password.RequiredLength = 6;
+             })
+           .AddEntityFrameworkStores<AppDbContext>()
+           .AddDefaultTokenProviders();
+            builder.Services.ConfigureApplicationCookie(opt =>
+            {
+                opt.LoginPath = "/Home/Login";
+                opt.LogoutPath = "/Home/Logout";
+                opt.AccessDeniedPath = "/Home/AccessDenied";
+                opt.ExpireTimeSpan = TimeSpan.FromDays(3);
+                opt.SlidingExpiration = true;
+            });
+
+
 
             var app = builder.Build();
 
@@ -67,6 +76,14 @@ namespace QuestionPlatform2
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Login}/{id?}");
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                SeedData.SeedAsync(services).GetAwaiter().GetResult();
+            }
+
+
 
             app.Run();
         }

@@ -1,16 +1,50 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace QuestionPlatform2.Models
 {
     public static class SeedData
     {
-        public static void Seed(this ModelBuilder modelBuilder)
+        public static async Task SeedAsync(IServiceProvider serviceProvider)
         {
-            modelBuilder.Entity<Question>().HasData(
-            new Question() { Id = 1, Title = "Soru Başlığı 1", Content = "İçerik 1", IsActive = true, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-            new Question() { Id = 2, Title = "Soru Başlığı 2", Content = "İçerik 2", IsActive = true, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-            new Question() { Id = 3, Title = "Soru Başlığı 3", Content = "İçerik 3", IsActive = false, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
-            );
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            
+            string[] roles = { "Admin", "User" };
+
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole<int>(role));
+                }
+            }
+
+            
+            string adminUserName = "admin";
+            string adminEmail = "admin@site.com";
+            string adminPassword = "Admin123!";
+
+            var adminUser = await userManager.FindByNameAsync(adminUserName);
+
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser
+                {
+                    UserName = adminUserName,
+                    Email = adminEmail,
+                    FullName = "System Admin",
+                    EmailConfirmed = true,
+                    PhotoUrl = "/uploads/default.jpg"
+                };
+
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
+            }
         }
     }
 }

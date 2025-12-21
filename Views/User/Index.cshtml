@@ -1,6 +1,41 @@
 ﻿@{
-    ViewBag.Title = "User Panel";
+    ViewData["Title"] = "Kullanıcı Bilgileri";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2>Merhaba @User.Identity.Name!</h2>
-<p>Burası kullanıcı paneli.</p>
+@using System.Security.Claims
+
+@if (!User.IsInRole("User"))
+{
+    <div class="alert alert-danger mt-4">
+        Bu sayfaya erişim yetkiniz yok.
+    </div>
+}
+else
+{
+    <div class="container mt-5">
+        <h1 class="display-3 mb-4 text-primary">Kullanıcı Bilgileri</h1>
+
+        <div class="card shadow-lg p-4" style="max-width: 700px;">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-4 text-center">
+                    @{
+                        var photoUrl = User.Claims.FirstOrDefault(c => c.Type == "PhotoUrl")?.Value;
+                        if (string.IsNullOrEmpty(photoUrl))
+                        {
+                            photoUrl = "/uploads/default.jpg";
+                        }
+
+                        var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Belirtilmemiş";
+                    }
+                    <img src="@photoUrl" class="rounded-circle mb-3" alt="Profil Fotoğrafı" width="180" height="180" />
+                </div>
+                <div class="col-md-8 p-3">
+                    <h2 class="fw-bold display-5">@User.Identity.Name</h2>
+                    <p class="fs-5"><strong>Email:</strong> @email</p>
+                    <p class="fs-5"><strong>Rol:</strong> @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

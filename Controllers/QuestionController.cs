@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestionPlatform2.Models;
@@ -12,7 +13,11 @@ namespace QuestionPlatform2.Controllers
         private readonly QuestionRepository _questionRepository;
         private readonly AnswerRepository _answerRepository;
         private readonly IMapper _mapper;
-        public QuestionController(QuestionRepository questionRepository, AnswerRepository answerRepository, IMapper mapper)
+
+        public QuestionController(
+            QuestionRepository questionRepository,
+            AnswerRepository answerRepository,
+            IMapper mapper)
         {
             _questionRepository = questionRepository;
             _answerRepository = answerRepository;
@@ -21,12 +26,10 @@ namespace QuestionPlatform2.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var questionEntities = await _questionRepository.GetAllAsync();
-            var questionModels = _mapper.Map<List<QuestionModel>>(questionEntities);
-
-            return View(questionModels);
+            var questions = await _questionRepository.GetAllAsync();
+            var model = _mapper.Map<List<QuestionModel>>(questions);
+            return View(model);
         }
-
 
         public async Task<IActionResult> Details(int id)
         {
@@ -42,22 +45,28 @@ namespace QuestionPlatform2.Controllers
             return View(model);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Add()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Add(Question model)
+        public async Task<IActionResult> Add(QuestionModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            await _questionRepository.AddAsync(model);
-            return RedirectToAction("Index");
+            var entity = _mapper.Map<Question>(model);
+            entity.CreatedAt = DateTime.Now;
+            entity.UpdatedAt = DateTime.Now;
+
+            await _questionRepository.AddAsync(entity);
+            return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id)
         {
             var question = await _questionRepository.GetByIdAsync(id);
@@ -68,22 +77,29 @@ namespace QuestionPlatform2.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Update(QuestionModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var entity = _mapper.Map<Question>(model);
-            await _questionRepository.UpdateAsync(entity);
+            var entity = await _questionRepository.GetByIdAsync(model.Id);
+            if (entity == null)
+                return NotFound();
 
-            return RedirectToAction("Index");
+            _mapper.Map(model, entity);
+            entity.UpdatedAt = DateTime.Now;
+
+            await _questionRepository.UpdateAsync(entity);
+            return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             await _questionRepository.DeleteAsync(id);
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
