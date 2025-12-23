@@ -7,22 +7,27 @@ using QuestionPlatform2.Hubs;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
 using QuestionPlatform2.ViewModels;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace QuestionPlatform2.Controllers
 {
     public class QuestionController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly QuestionRepository _questionRepository;
         private readonly AnswerRepository _answerRepository;
         private readonly IMapper _mapper;
         private readonly IHubContext<GeneralHub> _generalHub;
 
         public QuestionController(
+            UserManager<ApplicationUser> userManager,
             QuestionRepository questionRepository,
             AnswerRepository answerRepository,
             IMapper mapper,
             IHubContext<GeneralHub> generalHub)
         {
+            _userManager = userManager;
             _questionRepository = questionRepository;
             _answerRepository = answerRepository;
             _mapper = mapper;
@@ -31,8 +36,16 @@ namespace QuestionPlatform2.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var questions = await _questionRepository.GetAllAsync();
+            var query = _questionRepository.Where(q => q.IsActive);
+
+            if (User.IsInRole("Admin"))
+            {
+                query = _questionRepository.Where(q => true);
+            }
+
+            var questions = await query.ToListAsync();
             var model = _mapper.Map<List<QuestionModel>>(questions);
+
             return View(model);
         }
 
@@ -50,13 +63,13 @@ namespace QuestionPlatform2.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin")]
+        
         public IActionResult Add()
         {
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> Add(QuestionModel model)
         {
@@ -64,6 +77,8 @@ namespace QuestionPlatform2.Controllers
                 return View(model);
 
             var question = _mapper.Map<Question>(model);
+
+            question.UserId = int.Parse(_userManager.GetUserId(User));
             question.CreatedAt = DateTime.Now;
             question.UpdatedAt = DateTime.Now;
 

@@ -5,14 +5,7 @@
 
 @using System.Security.Claims
 
-@if (!User.IsInRole("Admin"))
-{
-    <div class="alert alert-danger mt-4">
-        Bu sayfaya erişim yetkiniz yok.
-    </div>
-}
-else
-{
+
     <div class="container mt-5">
         <h1 class="display-3 mb-4 text-primary">Admin Bilgileri</h1>
 
@@ -36,6 +29,16 @@ else
                     <p class="fs-5"><strong>Rol:</strong> @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value</p>
                 </div>
             </div>
+            <form asp-controller="Home"
+                  asp-action="Logout"
+                  method="post"
+                  class="text-end mt-4">
+                <button type="submit"
+                        class="btn btn-danger">
+                    🚪 Çıkış Yap
+                </button>
+            </form>
+
         </div>
     </div>
-}
+

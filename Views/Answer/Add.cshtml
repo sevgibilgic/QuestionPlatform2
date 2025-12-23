@@ -1,0 +1,49 @@
+﻿@model QuestionPlatform2.ViewModels.AnswerModel
+
+@{
+    ViewData["Title"] = "Cevap Yaz";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container mt-4">
+
+    <h2 class="fs-2 fw-bold mb-4">Cevabını Yaz</h2>
+
+    <form asp-action="Add" method="post">
+
+        <input type="hidden" asp-for="QuestionId" />
+
+        <div class="mb-3">
+            <label asp-for="AnswerContent" class="form-label fs-5">
+                Cevabın
+            </label>
+
+            <textarea asp-for="AnswerContent"
+                      class="form-control"
+                      rows="6"
+                      placeholder="Cevabınızı buraya yazınız...">
+            </textarea>
+
+            <span asp-validation-for="AnswerContent" class="text-danger"></span>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success btn-lg px-4">
+                Cevabı Gönder
+            </button>
+
+            <a asp-controller="Question"
+               asp-action="Details"
+               asp-route-id="@Model.QuestionId"
+               class="btn btn-secondary btn-lg px-4 ms-2">
+                Vazgeç
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

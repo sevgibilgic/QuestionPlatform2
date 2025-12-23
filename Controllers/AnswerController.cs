@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestionPlatform2.Models;
 using QuestionPlatform2.Repositories;
+using QuestionPlatform2.ViewModels;
 
 namespace QuestionPlatform2.Controllers
 {
@@ -30,32 +31,32 @@ namespace QuestionPlatform2.Controllers
             if (question == null)
                 return NotFound();
 
-            var model = new Answer
+            var model = new AnswerModel
             {
                 QuestionId = questionId
             };
-
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Answer model)
+        public async Task<IActionResult> Add(AnswerModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
-
-            var question = await _questionRepository.GetByIdAsync(model.QuestionId);
-            if (question == null)
-                return NotFound();
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            model.UserId = user.Id;
-            model.CreatedAt = DateTime.Now;
+            var answer = new Answer
+            {
+                QuestionId = model.QuestionId,
+                AnswerContent = model.AnswerContent,
+                UserId = user.Id,
+                CreatedAt = DateTime.Now
+            };
 
-            await _answerRepository.AddAsync(model);
+            await _answerRepository.AddAsync(answer);
 
             return RedirectToAction("Details", "Question", new { id = model.QuestionId });
         }

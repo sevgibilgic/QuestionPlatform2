@@ -26,10 +26,13 @@
                     <span class="text-danger" asp-validation-for="Content"></span>
                 </div>
 
-                <div class="form-check mb-3 ms-1">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label fs-5 ms-1"></label>
-                </div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="form-check mb-3 ms-1">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label fs-5 ms-1"></label>
+                    </div>
+                }
 
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary btn-lg px-4">Kaydet</button>

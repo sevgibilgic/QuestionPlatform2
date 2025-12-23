@@ -29,7 +29,7 @@ namespace QuestionPlatform2.ViewModels
 
 
         [Display(Name = "Aktif")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
 
 

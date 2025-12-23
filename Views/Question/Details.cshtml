@@ -21,6 +21,12 @@
             class="btn btn-outline-danger btn-lg mb-4 px-4">
         ❤️ Favori
     </button>
+    <a asp-controller="Answer"
+       asp-action="Add"
+       asp-route-questionId="@Model.Id"
+       class="btn btn-outline-primary btn-lg mb-4 px-4 ms-2">
+        ✍️ Cevapla
+    </a>
 
     <h3 class="fs-3 fw-semibold mt-4">Cevaplar:</h3>
 

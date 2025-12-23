@@ -6,6 +6,9 @@
 
 <h2>Kullanıcı & Rol Yönetimi</h2>
 
+<p class="fs-2 fw-bold">Toplam Kullanıcı: <span id="userCount">@Model.Count</span></p>
+<script src="~/js/signalr.js"></script>
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -41,3 +44,14 @@
         }
     </tbody>
 </table>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/general-hub")
+        .build();
+
+    connection.on("onUserAdded", function (count) {
+        document.getElementById("userCount").innerText = count;
+    });
+
+    connection.start().catch(err => console.error(err.toString()));
+</script>

@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Kullanıcı Bilgileri";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@model List<QuestionPlatform2.Models.Question>
+
+<a asp-action="Add" asp-controller="Question" class="btn btn-primary mb-4">➕ Ekle</a>
+
+@foreach (var q in Model)
+{
+    <div class="mb-4">
+
+        <h4 class="mb-2 fw-bold">@q.Title</h4>
+
+        <a asp-controller="Question"
+           asp-action="Details"
+           asp-route-id="@q.Id"
+           class="btn btn-sm btn-outline-primary">
+            Detaylar
+        </a>
+    </div>
+}

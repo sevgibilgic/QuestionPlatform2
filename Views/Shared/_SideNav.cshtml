@@ -5,36 +5,64 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Admin" asp-action="Index">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Hesap</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Admin" asp-action="Users">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Kullanıcılar</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Question" asp-action="Index">
-            <i class="fas fa-fw fa-list"></i>
-            <span>Sorular</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Favorite" asp-action="MyFavorites">
-            <i class="fas fa-fw fa-list"></i>
-            <span>Favorilerim</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Home" asp-action="Privacy">
-            <i class="fas fa-fw fa-list"></i>
-            <span>Gizlilik</span>
-        </a>
-    </li>
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <hr class="sidebar-divider my-0" />
+
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="User" asp-action="Index">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Hesap</span>
+            </a>
+        </li>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Admin" asp-action="Users">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Kullanıcılar</span>
+                </a>
+            </li>
+        }
+
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Question" asp-action="Index">
+                <i class="fas fa-fw fa-list"></i>
+                <span>Sorular</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Favorite" asp-action="MyFavorites">
+                <i class="fas fa-fw fa-star"></i>
+                <span>Favorilerim</span>
+            </a>
+        </li>
+
+        @if (!User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="User" asp-action="MyQuestions">
+                    <i class="fas fa-fw fa-question-circle"></i>
+                    <span>Sorularım</span>
+                </a>
+            </li>
+        }
+
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+                <i class="fas fa-fw fa-lock"></i>
+                <span>Gizlilik</span>
+            </a>
+        </li>
+
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+
+    </ul>
+
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">

@@ -6,6 +6,7 @@ namespace QuestionPlatform2.ViewModels
     {
         public int Id { get; set; }
 
+        public int QuestionId { get; set; }
 
         [Display(Name = "Cevap Detayları")]
         [Required(ErrorMessage = "Cevap Detaylarını Giriniz!")]

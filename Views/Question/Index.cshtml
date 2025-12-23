@@ -7,6 +7,7 @@
 @model List<QuestionPlatform2.ViewModels.QuestionModel>
 
 <p class="fs-2 fw-bold">Toplam Soru: <span id="questionCount">@Model.Count</span></p>
+
 <script src="~/js/signalr.js"></script>
 <script>
     const connection = new signalR.HubConnectionBuilder()
@@ -34,7 +35,10 @@
             <th>İçerik</th>
             <th>Oluşturulma</th>
             <th>Güncellenme</th>
-            <th>Durum</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Durum</th>
+            }
             <th>İşlemler</th>
         </tr>
     </thead>
@@ -42,41 +46,32 @@
         @foreach (var question in Model)
         {
             <tr>
-                <td>
-                    @((question.Title?.Length > 50
-                                    ? question.Title.Substring(0, 50) + "..."
-                                    : question.Title))
-                                                  </td>
-
-                <td>
-                    @((question.Content?.Length > 80
-                                    ? question.Content.Substring(0, 80) + "..."
-                                    : question.Content))
-            </td>
-
+                <td>@(question.Title?.Length > 50 ? question.Title.Substring(0, 50) + "..." : question.Title)</td>
+                <td>@(question.Content?.Length > 80 ? question.Content.Substring(0, 80) + "..." : question.Content)</td>
                 <td>@question.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                 <td>@question.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</td>
 
-                <td>
-                @if (question.IsActive)
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        @if (question.IsActive)
+                        {
+                            <span class="badge bg-success fs-6">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger fs-6">Pasif</span>
+                        }
+                    </td>
+                }
+
+                <td style="white-space: nowrap;">
+                    @if (User.IsInRole("Admin"))
                     {
-                        <span class="badge bg-success fs-6">Aktif</span>
+                        <a asp-action="Update" asp-controller="Question" asp-route-id="@question.Id" class="btn btn-primary btn-sm mb-1">Düzenle</a>
+                        <a asp-action="Delete" asp-controller="Question" asp-route-id="@question.Id" class="btn btn-danger btn-sm mb-1">Sil</a>
                     }
-                    else
-                    {
-                        <span class="badge bg-danger fs-6">Pasif</span>
-                    }
-                </td>
-
-                <td>
-                    <a asp-action="Update" asp-controller="Question" asp-route-id="@question.Id"
-                       class="btn btn-primary btn-sm mb-1">Düzenle</a>
-
-                    <a asp-action="Delete" asp-controller="Question" asp-route-id="@question.Id"
-                       class="btn btn-danger btn-sm mb-1">Sil</a>
-
-                    <a asp-action="Details" asp-controller="Question" asp-route-id="@question.Id"
-                       class="btn btn-secondary btn-sm mb-1">Detaylar</a>
+                    <a asp-action="Details" asp-controller="Question" asp-route-id="@question.Id" class="btn btn-secondary btn-sm mb-1">Detaylar</a>
                 </td>
             </tr>
         }
